@@ -42,9 +42,9 @@ killEvent = threading.Event()
 controlsMode = "auto"
 threads_list = []
 
-def startThreads(): 
+def startThreads():
 	# Daemons
-	killEvent = threading.Event()
+	global killEvent = threading.Event()
 	threads_list = []
 	### Conduct temperature
 	controlCThread = threading.Thread(target = controlC, args=(killEvent, "controlC"))
@@ -75,17 +75,17 @@ def glassOn():
 	GPIO.output(20, False)
 	print("GLASS ON")
 	return 0
-	
+
 def glassOff():
 	GPIO.output(20, True)
 	print("GLASS OFF")
 	return 0
-	
+
 def pumpOn():
 	GPIO.output(21, True)
 	print("PUMP ON")
 	return 0
-	
+
 def pumpOff():
 	GPIO.output(21, False)
 	print("PUMP OFF")
@@ -95,7 +95,7 @@ def conductOn():
 	GPIO.output(16, False)
 	print("CONDUCT ON")
 	return 0
-	
+
 def conductOff():
 	GPIO.output(16, True)
 	print("CONDUCT OFF")
@@ -104,7 +104,7 @@ def conductOff():
 def setModeAuto():
 	controlsMode = "auto"
 	print controlsMode
-	
+
 	GPIO.cleanup()
 	GPIO.setmode(GPIO.BCM)
 	### Ultrasonic sensor
@@ -116,7 +116,7 @@ def setModeAuto():
 	GPIO.setup(20, GPIO.OUT)
 	### Micropump
 	GPIO.setup(21, GPIO.OUT)
-	
+
 	startThreads()
 	return 0
 
@@ -130,7 +130,7 @@ def setModeMan():
 	return 0
 
 callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan}
-	
+
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('192.135.16.105', 10000)
 print >>sys.stderr, 'starting up on %s port %s' % server_address
@@ -139,19 +139,18 @@ sock.listen(1)
 
 setModeAuto()
 
-while True:	
+while True:
 	#print >>sys.stderr, 'waiting for a connection'
 	connection, client_address = sock.accept()
 
 	try:
 		#print >> sys.stderr, 'connection from', client_address
-		
+
 		message = connection.recv(1024)
 		data = callbacks[message]()
-	
+
 		if data != 0:
 			connection.sendall(data)
 
 	finally:
 		connection.close()
-
