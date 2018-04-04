@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/plotly.min.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/jquery-3.2.1.min.js') }}"></script>
+		<script type="text/javascript" src="{{ url_for('static', filename='js/flot/	jquery.flot.min.js') }}"></script>
+		<link rel="stylesheet" type="text/css" src="{{ url_for('static', filename='css/style.css') }}" />
+	</head>
+	<body>
+		<header>
+			<h3>Cloud Chamber Control Center</h3>
+		</header>
+		<div id="main">
+			<button type="button" id="led_on">ON</button>
+			<button type="button" id="led_off">OFF</button>
+			<div id="result">
+			    Temperature 0: <p id="sens0"></p>
+			    Temperature 1: <p id="sens1"></p>
+			    Temperature 2: <p id="sens2"></p>
+			</div>
+			<div id="placeholder" style="width:600px;height:300px"></div>
+		</div>
+	</body>
+	<script type="text/javascript">
+		$("#led_on").click(function(e) {
+			$.ajax({
+				url: "/on",
+				method: "GET",
+				success: function(data) {
+				}
+			});	
+		});
+		
+		$("#led_off").click(function(e) {
+			$.ajax({
+				url: "/off",
+				method: "GET",
+				success: function(data) {
+				}
+			});	
+		});
+		
+		function getTemp() {
+			$.ajax({
+				url: "/getSensors",
+				method: "GET",
+				success: function(e) {
+                    var data = JSON.parse(e);
+                    updateTemp(data);
+				}
+			});	
+		};
+		
+		function updateTemp(data) {
+		    $("#sens0").text(data.sensor0);
+		    $("#sens1").text(data.sensor1);
+		    $("#sens2").text(data.sensor2);
+		};
+		
+		//setInterval(function() { getTemp(); }, 5000);
+		
+	</script>
+</html>
