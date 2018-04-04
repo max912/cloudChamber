@@ -6,7 +6,7 @@ import os
 import signal
 import RPi.GPIO as GPIO
 from lib.temperature import Temperature
-from lib.control import controlT, controlL, controlP, controlG
+from lib.control import controlC, controlL, controlG
 import threading
 import time
 
@@ -47,10 +47,10 @@ def startThreads():
 	killEvent = threading.Event()
 	threads_list = []
 	### Conduct temperature
-	controlTThread = threading.Thread(target = controlT, args=(killEvent, "controlT"))
-	controlTThread.setDaemon(True)
-	controlTThread.start()
-	threads_list.append(controlTThread)
+	controlCThread = threading.Thread(target = controlC, args=(killEvent, "controlC"))
+	controlCThread.setDaemon(True)
+	controlCThread.start()
+	threads_list.append(controlCThread)
 
 	### Glass temperature
 	controlGThread = threading.Thread(target = controlG, args=(killEvent, "controlG"))
@@ -140,11 +140,11 @@ sock.listen(1)
 setModeAuto()
 
 while True:	
-	print >>sys.stderr, 'waiting for a connection'
+	#print >>sys.stderr, 'waiting for a connection'
 	connection, client_address = sock.accept()
 
 	try:
-		print >> sys.stderr, 'connection from', client_address
+		#print >> sys.stderr, 'connection from', client_address
 		
 		message = connection.recv(1024)
 		data = callbacks[message]()
