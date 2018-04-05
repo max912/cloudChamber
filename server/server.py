@@ -146,12 +146,15 @@ while True:
 
 	try:
 		#print >> sys.stderr, 'connection from', client_address
-
 		message = connection.recv(1024)
 		data = callbacks[message]()
 
 		if data != 0:
 			connection.sendall(data)
-
+			
+	except:
+		e = sys.exc_info()[0]
+		print str(e)
+		
 	finally:
 		connection.close()
