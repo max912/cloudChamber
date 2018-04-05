@@ -10,21 +10,6 @@ from lib.control import controlC, controlL, controlG
 import threading
 import time
 
-GPIO.setmode(GPIO.BCM)
-
-### Ultrasonic sensor
-GPIO.setup(23, GPIO.OUT)
-GPIO.setup(24, GPIO.IN)
-
-### Conduct relay
-GPIO.setup(16, GPIO.OUT)
-
-### Glass relay
-GPIO.setup(20, GPIO.OUT)
-
-### Micropump
-GPIO.setup(21, GPIO.OUT)
-
 socket.socket._bind = socket.socket.bind
 def my_socket_bind(self, *args, **kwargs):
     self.setsockopt(socket.SOL_SOCKET, socket.SO_REUSEADDR, 1)
@@ -151,10 +136,10 @@ while True:
 
 		if data != 0:
 			connection.sendall(data)
-			
+
 	except:
 		e = sys.exc_info()[0]
 		print str(e)
-		
+
 	finally:
 		connection.close()

@@ -5,17 +5,6 @@ from temperature import Temperature
 from ultrasonic import getLevel
 import time
 
-GPIO.setmode(GPIO.BCM)
-
-### Conduct relay
-GPIO.setup(16, GPIO.OUT)
-
-### Glass relay
-GPIO.setup(20, GPIO.OUT)
-
-### Micropump
-GPIO.setup(21, GPIO.OUT)
-
 def controlG(stop_event, arg):
 	status = 1
 	print "Glass ON"
@@ -27,7 +16,7 @@ def controlG(stop_event, arg):
 			print "Glass OFF"
 		elif temp < 29 and status == 0:
 			GPIO.output(20, False)
-			status = 1 
+			status = 1
 			print "Glass ON"
 		time.sleep(10)
 	print ("Thread killed: %s" % arg)
@@ -37,17 +26,17 @@ def controlL(stop_event, arg):
 	print "Pump OFF"
 	while not stop_event.is_set():
 		lvl = getLevel()
-		if lvl > 7.2 and status == 1:
-			GPIO.output(21, False)
-			status = 0
-			print "Pump OFF"
-		elif lvl < 6.5 and status == 0:
+		if lvl > 7.5 and status == 0:
 			GPIO.output(21, True)
 			status = 1
 			print "Pump ON"
+		elif lvl < 6.8 and status == 1:
+			GPIO.output(21, False)
+			status = 0
+			print "Pump OFF"
 		time.sleep(5)
 	print ("Thread killed: %s" % arg)
-	
+
 def controlC(stop_event, arg):
 	status = 1
 	print "Conduct ON"
