@@ -20,7 +20,6 @@ def controlG(stop_event, arg):
 	status = 1
 	print "Glass ON"
 	while not stop_event.is_set():
-		print stop_event.is_set()
 		temp = Temperature().getGlassT()
 		if temp > 31 and status == 1:
 			GPIO.output(20, True)

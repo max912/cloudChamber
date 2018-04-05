@@ -44,7 +44,8 @@ threads_list = []
 
 def startThreads():
 	# Daemons
-	global killEvent = threading.Event()
+	global killEvent
+	killEvent = threading.Event()
 	threads_list = []
 	### Conduct temperature
 	controlCThread = threading.Thread(target = controlC, args=(killEvent, "controlC"))
