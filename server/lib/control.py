@@ -29,7 +29,7 @@ def controlG(stop_event, arg):
 			GPIO.output(20, False)
 			status = 1 
 			print "Glass ON"
-		time.sleep(1)
+		time.sleep(10)
 	print ("Thread killed: %s" % arg)
 
 def controlL(stop_event, arg):
