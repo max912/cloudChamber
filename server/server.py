@@ -103,6 +103,10 @@ def setModeAuto():
 	### Micropump
 	GPIO.setup(21, GPIO.OUT)
 
+	glassOn()
+	conductOn()
+	pumpOff()
+
 	startThreads()
 	return 0
 

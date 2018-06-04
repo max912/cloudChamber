@@ -7,7 +7,6 @@ import time
 
 def controlG(stop_event, arg):
 	status = 1
-	print "Glass ON"
 	while not stop_event.is_set():
 		temp = Temperature().getGlassT()
 		if temp > 31 and status == 1:
@@ -23,7 +22,6 @@ def controlG(stop_event, arg):
 
 def controlL(stop_event, arg):
 	status = 0
-	print "Pump OFF"
 	while not stop_event.is_set():
 		lvl = getLevel()
 		if lvl > 7.5 and status == 0:
@@ -39,7 +37,6 @@ def controlL(stop_event, arg):
 
 def controlC(stop_event, arg):
 	status = 1
-	print "Conduct ON"
 	while not stop_event.is_set():
 		temp = Temperature().getConductT()
 		if temp > 51 and status == 1:
