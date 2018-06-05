@@ -1,0 +1,215 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<title>DFA Cloud Chamber</title>
+		<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
+		<script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<link rel="stylesheet" type="text/css" href="css/style.css">
+		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
+	</head>
+	<body>
+	    <div class="title">
+	        <img alt="unipd" src="unipd_logo.png" id="unipd" />
+	        <img alt="dfa" src="logo_dfa.png" id="dfa" />
+	        <h1>DFA Cloud Chamber</h1>
+	        <img alt="fabio" src="bg.jpg" id="fz" />
+        </div>
+        <div id="plots">
+		    <div id="plateDiv" class="plot"></div>
+		    <div id="conductDiv" class="plot"></div>
+		    <div id="glassDiv" class="plot"></div>
+		</div>
+		
+		<div id="controls">
+		    <div class="mode">
+		        <span>Control mode:</span>
+		        <button type="button" id="mode_auto">AUTO</button>
+		        <button type="button" id="mode_manual">MANUAL</button>
+		        <div class="onoff">
+		            <ul id="onoffli">
+		                <li>
+                            <span>Pump:</span>
+                            <label class="switch">
+                              <input type="checkbox" id="pump_switch">
+                              <span class="slider round"></span>
+                            </label>
+                        </li>
+                        
+                        <li>
+                            <span>Conduct:</span>
+                            <label class="switch">
+                              <input type="checkbox" id="conduct_switch">
+                              <span class="slider round"></span>
+                            </label>
+                        </li>
+                        
+                        <li>
+                            <span>Glass:</span>
+                            <label class="switch">
+                              <input type="checkbox" id="glass_switch">
+                              <span class="slider round"></span>
+                            </label>
+                        </li>
+                    </ul>		        
+		        </div>
+		    </div>
+		</div>
+		
+		<script type="text/javascript">
+
+            var layoutP = {
+              title: 'Plate',
+              xaxis: {
+                title: 'Time',
+                titlefont: {
+                  family: 'Courier New, monospace',
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              },
+              yaxis: {
+                title: 'Temperature (C)',
+                titlefont: {
+                  family: 'Courier New, monospace',
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              }
+            };
+
+            var layoutG = {
+              title: 'Glass',
+              xaxis: {
+                title: 'Time',
+                titlefont: {
+                  family: 'Courier New, monospace',
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              },
+              yaxis: {
+                title: 'Temperature (C)',
+                titlefont: {
+                  family: 'Courier New, monospace',
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              }
+            };
+            
+            var layoutC = {
+              title: 'Conduct',
+              xaxis: {
+                title: 'Time',
+                titlefont: {
+                  family: 'Courier New, monospace',
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              },
+              yaxis: {
+                title: 'Temperature (C)',
+                titlefont: {
+                  family: 'Courier New, monospace',
+                  size: 18,
+                  color: '#7f7f7f'
+                }
+              }
+            };    	        
+	        
+	        
+	        var plateData = [{x:[], y:[], type:"scatter"}];
+	        var conductData = [{x:[], y:[], type:"scatter"}];	
+	        var glassData = [{x:[], y:[], type:"scatter"}];
+            
+            Plotly.newPlot("plateDiv", plateData, layoutP);
+            Plotly.newPlot("conductDiv", conductData, layoutC);
+            Plotly.newPlot("glassDiv", glassData, layoutG);            
+            
+            /*
+            setInterval(function() {
+                $.get("getTemperature", function(response, status) {
+                    var temp = JSON.parse(response);
+                    
+                    plateData[0].x = plateData[0].x.concat([temp.date]);
+                    glassData[0].x = glassData[0].x.concat([temp.date]);
+                    conductData[0].x = conductData[0].x.concat([temp.date]);
+                    
+                    plateData[0].y = plateData[0].y.concat([temp.plate]);
+                    glassData[0].y = glassData[0].y.concat([temp.glass]);
+                    conductData[0].y = conductData[0].y.concat([temp.conduct]);
+                    
+                    
+                    var updateP = {
+                        data: [{
+                            x: plateData[0].x,
+                            y: plateData[0].y
+                        }],
+                        layout: layoutP
+                    };
+                    
+                    var updateC = {
+                        data: [{
+                            x: conductData[0].x,
+                            y: conductData[0].y
+                        }],
+                        layout: layoutC
+                    };
+                    
+                    var updateG = {
+                        data: [{
+                            x: glassData[0].x,
+                            y: glassData[0].y
+                        }],
+                        layout: layoutG
+                    };
+                    
+                    Plotly.react("plateDiv", updateP);
+                    Plotly.react("conductDiv", updateC);
+                    Plotly.react("glassDiv", updateG);
+                    
+                });
+            }, 500);
+            */
+            
+            $("#mode_auto").click(function() {
+                $(".onoff").slideUp();
+                $("#pump_switch")[0].checked = false;
+                $("#glass_switch")[0].checked = false;
+                $("#conduct_switch")[0].checked = false;
+                $.get("setModeAuto", function(response, status) {console.debug(response)});
+            });
+            
+            $("#mode_manual").click(function() {
+                $(".onoff").slideDown();
+                $.get("setModeMan", function(response, status) {console.debug(response)});
+            });
+            
+            $("#pump_switch").click(function(evt) {
+                if(evt.target.checked) $.get("pumpOn", function(response, status) {console.debug(response)});
+                else $.get("pumpOff", function(response, status) {console.debug(response)});
+            });
+            
+            $("#conduct_switch").click(function(evt) {
+                if(evt.target.checked) $.get("conductOn", function(response, status) {console.debug(response)});
+                else $.get("conductOff", function(response, status) {console.debug(response)});
+            });
+            
+            $("#glass_switch").click(function(evt) {
+                if(evt.target.checked) $.get("glassOn", function(response, status) {console.debug(response)});
+                else $.get("glassOff", function(response, status) {console.debug(response)});
+            });
+            
+            $.get("getStatus", function(response, status){
+                var status = JSON.parse(response);
+                if(status.mode) {
+                    $("#pump_switch")[0].checked = status.pump;
+                    $("#glass_switch")[0].checked = status.glass;
+                    $("#conduct_switch")[0].checked = status.conduct;
+                    $(".onoff").slideDown();
+                }
+            });
+	        	                
+	    </script>
+	</body>
+</html>

@@ -1,0 +1,149 @@
+@font-face {
+    font-family: CaviarDreams;
+    src: url(../font/CaviarDreams.ttf);
+}
+
+@font-face {
+    font-family: CaviarDreams;
+    src: url(../font/CaviarDreams_Italic.ttf);
+    font-style: italic
+}
+
+html {
+    background: maroon;
+}
+
+body {
+    width: 95%;
+    margin: 1em auto;
+    padding: 1em;
+    background: ivory;
+    box-shadow: 0 0 20px 0 black;
+    font-family: CaviarDreams; 
+}
+
+#plots {
+    text-align: center;
+}
+
+.plot {
+    width: 33%;
+    display: inline-block;
+    margin: 1em 0;
+}
+
+.plotlyjsicon {
+    display: none !important;
+}
+
+.title {
+    text-align: center;
+    width: 100%;
+}
+
+#unipd {
+    position: absolute;
+    width: 8%;
+    top: 2%;
+    left: 2%;
+}
+
+#dfa {
+    position: absolute;
+    width: 6%;
+    top: 2%;
+    right: 2%;
+}
+
+#fz {
+    width: 20%;
+    text-align: center;
+}
+
+#controls {
+    width: 30%;
+    margin: auto;
+    border: 1px solid rgba(0, 0, 0, .4);
+    border-radius: 2px;
+    padding: 1em;
+    text-align: center;
+}
+
+.onoff {
+    display: none;
+    text-align: left;
+    width: 80%;
+    margin: auto;
+    margin-top: 1em;
+    padding: 0;
+}
+
+#onoffli {
+    list-style: none;
+}
+
+#onoffli>li>span {
+    width: 50%;
+    display: inline-block;
+    margin: .1em;
+}
+
+.switch {
+  position: relative;
+  display: inline-block;
+  width: 60px;
+  height: 34px;
+  vertical-align: middle;
+  margin: .1em;
+}
+
+/* Hide default HTML checkbox */
+.switch input {display:none;}
+
+/* The slider */
+.slider {
+  position: absolute;
+  cursor: pointer;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background-color: #ccc;
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+.slider:before {
+  position: absolute;
+  content: "";
+  height: 26px;
+  width: 26px;
+  left: 4px;
+  bottom: 4px;
+  background-color: white;
+  -webkit-transition: .3s;
+  transition: .3s;
+}
+
+input:checked + .slider {
+  background-color: maroon; /*#2196F3;*/
+}
+
+input:focus + .slider {
+  box-shadow: 0 0 1px maroon; /*#2196F3;*/
+}
+
+input:checked + .slider:before {
+  -webkit-transform: translateX(26px);
+  -ms-transform: translateX(26px);
+  transform: translateX(26px);
+}
+
+/* Rounded sliders */
+.slider.round {
+  border-radius: 34px;
+}
+
+.slider.round:before {
+  border-radius: 50%;
+}
