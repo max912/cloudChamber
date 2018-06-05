@@ -24,7 +24,7 @@ def signal_handler(signal, frame):
 signal.signal(signal.SIGINT, signal_handler)
 
 killEvent = threading.Event()
-controlsMode = "auto"
+status = {"controlsMode": 0, "pumpStatus": 0, "glassStatus": 0, "conductStatus": 0}
 threads_list = []
 
 def startThreads():
@@ -55,41 +55,46 @@ def stopThreads():
 	map(threading.Thread.join, threads_list)
 
 def getTemperature():
-	return Temperature().getTemp()
+	#return Temperature().getTemp()
+	return  ("{\"plate\": \""+str(10)+"\",\"conduct\": \""+str(5)+"\",\"glass\": \""+str(0)+"\"}")
 
 def glassOn():
 	GPIO.output(20, False)
 	print("GLASS ON")
+	status["glassStatus"] = 1
 	return 0
 
 def glassOff():
 	GPIO.output(20, True)
 	print("GLASS OFF")
+	status["glassStatus"] = 0
 	return 0
 
 def pumpOn():
 	GPIO.output(21, True)
 	print("PUMP ON")
+	status["pumpStatus"] = 1
 	return 0
 
 def pumpOff():
 	GPIO.output(21, False)
 	print("PUMP OFF")
+	status["pumpStatus"] = 0
 	return 0
 
 def conductOn():
 	GPIO.output(16, False)
 	print("CONDUCT ON")
+	status["conductStatus"] = 1
 	return 0
 
 def conductOff():
 	GPIO.output(16, True)
 	print("CONDUCT OFF")
+	status["conductStatus"] = 0
 	return 0
 
 def setModeAuto():
-	controlsMode = "auto"
-	print controlsMode
 
 	GPIO.cleanup()
 	GPIO.setmode(GPIO.BCM)
@@ -107,19 +112,29 @@ def setModeAuto():
 	conductOn()
 	pumpOff()
 
-	startThreads()
+	#startThreads()
+	
+	status["controlsMode"] = 0
+	print "Controls mode --> AUTO"
+	
 	return 0
 
 def setModeMan():
-	controlsMode = "manual"
-	print controlsMode
-	stopThreads()
+
+	#stopThreads()
 	glassOff()
 	conductOff()
 	pumpOff()
+	
+	status["controlsMode"] = 1
+	print "Controls mode --> MANUAL"
+	
 	return 0
+	
+def getStatus():
+	return ("{\"mode\":"+str(status["controlsMode"])+",\"pump\":"+str(status["pumpStatus"])+",\"glass\":"+str(status["glassStatus"])+",\"conduct\":"+str(status["conductStatus"])+"}")
 
-callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan}
+callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan, "getStatus": getStatus}
 
 sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
 server_address = ('192.135.16.105', 10000)
@@ -127,7 +142,7 @@ print >>sys.stderr, 'starting up on %s port %s' % server_address
 sock.bind(server_address)
 sock.listen(1)
 
-setModeAuto()
+#setModeAuto()
 
 while True:
 	#print >>sys.stderr, 'waiting for a connection'
