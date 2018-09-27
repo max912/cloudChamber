@@ -1,13 +1,9 @@
 import RPi.GPIO as GPIO
 import time
 
-GPIO.setmode(GPIO.BCM)
-
-### Ultrasonic sensor
-GPIO.setup(23, GPIO.OUT)
-GPIO.setup(24, GPIO.IN)
 
 def getDistance():
+
 	TRIG = 23
 	ECHO = 24
 
@@ -47,14 +43,16 @@ def getLevel():
 	i = 0
 	n = 0
 	err = 0
-	while i < 100:
+	while i < 50:
+		if GPIO.getmode != 11:
+			break
 		new_dist = getDistance()
 		if new_dist > 0:
 			dist += new_dist
 			n += 1
 		else:
 			err += 1
-			print("Error while reading level sensor: "+str(err))
+			#print("Error while reading level sensor: "+str(err))
 		i += 1
 	if n > 0:
 		return round(dist/n, 1)

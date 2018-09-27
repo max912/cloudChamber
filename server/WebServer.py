@@ -10,6 +10,19 @@ import time
 import datetime
 import random
 
+### GPIO SETUP
+GPIO.setmode(GPIO.BCM)
+### Ultrasonic sensor
+GPIO.setup(23, GPIO.OUT)
+GPIO.setup(24, GPIO.IN)
+### Conduct relay
+GPIO.setup(16, GPIO.OUT)
+### Glass relay
+GPIO.setup(20, GPIO.OUT)
+### Micropump
+GPIO.setup(21, GPIO.OUT)
+
+
 killEvent = threading.Event()
 status = {"controlsMode": 0, "pumpStatus": 0, "glassStatus": 0, "conductStatus": 0}
 threads_list = []
@@ -42,9 +55,9 @@ def stopThreads():
 	map(threading.Thread.join, threads_list)
 
 def getTemperature():
-	#return Temperature().getTemp()
-	date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
-	return  ("{\"plate\": \""+str(random.randint(1,50))+"\",\"conduct\": \""+str(random.randint(1,50))+"\",\"glass\": \""+str(random.randint(1,50))+"\", \"date\":\""+str(date)+"\"}")
+	return Temperature().getTemp()
+	#date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+	#return  ("{\"plate\": \""+str(random.randint(1,50))+"\",\"conduct\": \""+str(random.randint(1,50))+"\",\"glass\": \""+str(random.randint(1,50))+"\", \"date\":\""+str(date)+"\"}")
 
 def glassOn():
 	GPIO.output(20, False)
@@ -84,23 +97,11 @@ def conductOff():
 
 def setModeAuto():
 
-	GPIO.cleanup()
-	GPIO.setmode(GPIO.BCM)
-	### Ultrasonic sensor
-	GPIO.setup(23, GPIO.OUT)
-	GPIO.setup(24, GPIO.IN)
-	### Conduct relay
-	GPIO.setup(16, GPIO.OUT)
-	### Glass relay
-	GPIO.setup(20, GPIO.OUT)
-	### Micropump
-	GPIO.setup(21, GPIO.OUT)
-
-	glassOn()
-	conductOn()
+	glassOff()
+	conductOff()
 	pumpOff()
 
-	#startThreads()
+	startThreads()
 	
 	status["controlsMode"] = 0
 	print "Controls mode --> AUTO"
@@ -109,7 +110,7 @@ def setModeAuto():
 
 def setModeMan():
 
-	#stopThreads()
+	stopThreads()
 	glassOff()
 	conductOff()
 	pumpOff()
@@ -124,7 +125,7 @@ def getStatus():
 
 callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan, "getStatus": getStatus}
 
-#setModeAuto()
+setModeAuto()
 
 class WebServer(object):
 
@@ -152,8 +153,9 @@ class WebServer(object):
     def shutdown(self):
         try:
             print("Shutting down server")
-            GPIO.cleanup()
+            stopThreads()
             s.socket.shutdown(socket.SHUT_RDWR)
+            time.sleep(2)
 
         except Exception as e:
             pass # Pass if socket is already closed
@@ -177,20 +179,20 @@ class WebServer(object):
         while True:
             (client, address) = self.socket.accept()
             client.settimeout(60)
-            print("Recieved connection from {addr}".format(addr=address))
+#            print("Recieved connection from {addr}".format(addr=address))
             threading.Thread(target=self._handle_client, args=(client, address)).start()
 
     def _handle_client(self, client, address):
         PACKET_SIZE = 1024
         while True:
-            print("CLIENT",client)
+#            print("CLIENT",client)
             data = client.recv(PACKET_SIZE).decode() # Recieve data packet from client and decode
 
             if not data: break
 
             request_method = data.split(' ')[0]
-            print("Method: {m}".format(m=request_method))
-            print("Request Body: {b}".format(b=data))
+#            print("Method: {m}".format(m=request_method))
+#            print("Request Body: {b}".format(b=data))
 
             if request_method == "GET" or request_method == "HEAD":
                 # Ex) "GET /index.html" split on space
@@ -209,7 +211,7 @@ class WebServer(object):
                 
                 else:
                     filepath_to_serve = self.content_dir + file_requested
-                    print("Serving web page [{fp}]".format(fp=filepath_to_serve))
+#                    print("Serving web page [{fp}]".format(fp=filepath_to_serve))
 
                     # Load and Serve files content
                     try:
@@ -220,7 +222,7 @@ class WebServer(object):
                         response_header = self._generate_headers(200)
 
                     except Exception as e:
-                        print("File not found. Serving 404 page.")
+#                        print("File not found. Serving 404 page.")
                         response_header = self._generate_headers(404)
 
                         if request_method == "GET": # Temporary 404 Response Page

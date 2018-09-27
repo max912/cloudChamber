@@ -1,3 +1,5 @@
+import datetime
+
 class Temperature:
 
     def __init__(self):
@@ -30,7 +32,8 @@ class Temperature:
         t1 = self.read_temp(1)
         t2 = self.read_temp(2)
         t3 = self.read_temp(3)
-        return ("{\"plate\": \""+str(t1)+"\",\"conduct\": \""+str(t2)+"\",\"glass\": \""+str(t3)+"\"}")
+        date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+        return ("{\"plate\": \""+str(t1)+"\",\"conduct\": \""+str(t2)+"\",\"glass\": \""+str(t3)+"\", \"date\":\""+str(date)+"\"}")
 
     def getConductT(self):
         return self.read_temp(2)

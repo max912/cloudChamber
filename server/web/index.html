@@ -2,8 +2,8 @@
 <html>
 	<head>
 		<title>DFA Cloud Chamber</title>
-		<script type="text/javascript" src="https://code.jquery.com/jquery-3.3.1.min.js" integrity="sha256-FgpCb/KJQlLNfOu91ta32o/NMZxltwRo8QtmkMRdAu8=" crossorigin="anonymous"></script>
-		<script type="text/javascript" src="https://cdn.plot.ly/plotly-latest.min.js"></script>
+		<script type="text/javascript" src="js/jquery-3.3.1.min.js"></script>
+		<script type="text/javascript" src="js/plotly-latest.min.js"></script>
 		<link rel="stylesheet" type="text/css" href="css/style.css">
 		<link rel="shortcut icon" type="image/x-icon" href="/favicon.ico">
 	</head>
@@ -54,6 +54,15 @@
 		        </div>
 		    </div>
 		</div>
+		
+		<footer>
+		    <div id="borsato">
+		        <p>Special thanks to Enrico Borsato</p>
+		    </div>
+		    <div id="zanetti">
+		        <p>A Marco Zanetti Production</p>
+		    </div>
+		</footer>
 		
 		<script type="text/javascript">
 
@@ -126,7 +135,7 @@
             Plotly.newPlot("conductDiv", conductData, layoutC);
             Plotly.newPlot("glassDiv", glassData, layoutG);            
             
-            /*
+            
             setInterval(function() {
                 $.get("getTemperature", function(response, status) {
                     var temp = JSON.parse(response);
@@ -170,7 +179,7 @@
                     
                 });
             }, 500);
-            */
+            
             
             $("#mode_auto").click(function() {
                 $(".onoff").slideUp();

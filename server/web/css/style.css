@@ -27,7 +27,7 @@ body {
 }
 
 .plot {
-    width: 33%;
+    width: 32%;
     display: inline-block;
     margin: 1em 0;
 }
@@ -146,4 +146,13 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+footer div {
+    display: inline-block;
+    width: 49%;
+}
+
+#zanetti {
+    text-align: right;
 }
