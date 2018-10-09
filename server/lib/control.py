@@ -25,11 +25,11 @@ def controlL(stop_event, arg):
 	status = 0
 	while not stop_event.is_set():
 		lvl = getLevel()
-		if lvl > 6.8 and status == 0:
+		if lvl > 6.5 and status == 0:
 			GPIO.output(21, True)
 			status = 1
 			print "Pump ON"
-		elif lvl < 6.3 and status == 1:
+		elif lvl < 6.0 and status == 1:
 			GPIO.output(21, False)
 			status = 0
 			print "Pump OFF"

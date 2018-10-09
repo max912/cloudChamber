@@ -74,15 +74,25 @@ body {
     text-align: left;
     width: 80%;
     margin: auto;
-    margin-top: 1em;
+    margin-top: .5em;
     padding: 0;
 }
 
-#onoffli {
+#hvdiv{
+    text-align: left;
+    width: 30%;
+    margin: .5em auto;
+    padding: 1em;
+    border: 1px solid #e51515;
+    border-radius: 2px;
+    color: #e51515;
+}
+
+.onoffli {
     list-style: none;
 }
 
-#onoffli>li>span {
+.onoffli>li>span {
     width: 50%;
     display: inline-block;
     margin: .1em;
@@ -146,6 +156,10 @@ input:checked + .slider:before {
 
 .slider.round:before {
   border-radius: 50%;
+}
+
+footer {
+	margin-top: 1em;
 }
 
 footer div {

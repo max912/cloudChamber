@@ -44,8 +44,6 @@ def getLevel():
 	n = 0
 	err = 0
 	while i < 50:
-		if GPIO.getmode != 11:
-			break
 		new_dist = getDistance()
 		if new_dist > 0:
 			dist += new_dist

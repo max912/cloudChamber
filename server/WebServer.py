@@ -10,6 +10,8 @@ import time
 import datetime
 import random
 
+GPIO.setwarnings(False)
+
 ### GPIO SETUP
 GPIO.setmode(GPIO.BCM)
 ### Ultrasonic sensor
@@ -21,10 +23,12 @@ GPIO.setup(16, GPIO.OUT)
 GPIO.setup(20, GPIO.OUT)
 ### Micropump
 GPIO.setup(21, GPIO.OUT)
+### High Voltage
+GPIO.setup(26, GPIO.OUT)
 
 
 killEvent = threading.Event()
-status = {"controlsMode": 0, "pumpStatus": 0, "glassStatus": 0, "conductStatus": 0}
+status = {"controlsMode": 0, "pumpStatus": 0, "glassStatus": 0, "conductStatus": 0, "hvStatus": 0}
 threads_list = []
 
 def startThreads():
@@ -56,6 +60,7 @@ def stopThreads():
 
 def getTemperature():
 	return Temperature().getTemp()
+        ##### DEBUG
 	#date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	#return  ("{\"plate\": \""+str(random.randint(1,50))+"\",\"conduct\": \""+str(random.randint(1,50))+"\",\"glass\": \""+str(random.randint(1,50))+"\", \"date\":\""+str(date)+"\"}")
 
@@ -95,12 +100,24 @@ def conductOff():
 	status["conductStatus"] = 0
 	return 0
 
+def hvOn():
+	GPIO.output(26, True)
+	print("HV ON")
+	status["hvStatus"] = 1
+	return 0
+
+def hvOff():
+	GPIO.output(26, False)
+	print("HV OFF")
+	status["hvStatus"] = 0
+	return 0
+
 def setModeAuto():
 
 	glassOff()
 	conductOff()
 	pumpOff()
-
+	
 	startThreads()
 	
 	status["controlsMode"] = 0
@@ -121,18 +138,34 @@ def setModeMan():
 	return 0
 	
 def getStatus():
-	return ("{\"mode\":"+str(status["controlsMode"])+",\"pump\":"+str(status["pumpStatus"])+",\"glass\":"+str(status["glassStatus"])+",\"conduct\":"+str(status["conductStatus"])+"}")
+	return ("{\"mode\":"+str(status["controlsMode"])+",\"pump\":"+str(status["pumpStatus"])+",\"glass\":"+str(status["glassStatus"])+",\"conduct\":"+str(status["conductStatus"])+",\"hv\":"+str(status["hvStatus"])+"}")
 
-callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan, "getStatus": getStatus}
+callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan, "getStatus": getStatus, "hvOn": hvOn, "hvOff": hvOff}
 
-setModeAuto()
+
+
+
+def bootstrap():
+	print("Starting the cloud chamber monitoring system...")
+	glassOff()
+	pumpOff()
+	conductOff()
+	hvOff()
+	while Temperature().getPlateT() > -8:
+		print("Waiting for plate to reach -8 C... current temperature is "+str(Temperature().getPlateT()))
+		time.sleep(10)
+	setModeAuto()
+
+
+bootstrap()
+
 
 class WebServer(object):
 
     def __init__(self, port=8080):
         self.host = socket.gethostname().split('.')[0] # Default to any available network interface
         self.port = port
-        self.content_dir = 'web' # Directory where webpage files are stored
+        self.content_dir = '/home/pi/cloudChamber/server/web' # Directory where webpage files are stored
         self.server_address = ('192.135.16.105', 10000)
 
     def start(self):
@@ -226,7 +259,7 @@ class WebServer(object):
                         response_header = self._generate_headers(404)
 
                         if request_method == "GET": # Temporary 404 Response Page
-                            response_data = b"<html><body><center><h1>Error 404: File not found</h1></center><p>Head back to <a href="/">dry land</a>.</p></body></html>"
+                            response_data = "<html><body><center><h1>Error 404: File not found</h1></center><p>Head back to <a href="/">dry land</a>.</p></body></html>"
 
 
                 response = response_header.encode()
