@@ -16,7 +16,7 @@ def shutdownServer(sig, unused):
 
 
 signal.signal(signal.SIGINT, shutdownServer)
-server = WebServer(8080)
+server = WebServer(10000)
 server.start()
 
 print("Press Ctrl+C to shut down server.")

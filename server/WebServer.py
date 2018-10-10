@@ -176,11 +176,11 @@ bootstrapThread.start()
 
 class WebServer(object):
 
-    def __init__(self, port=8080):
-        self.host = socket.gethostname().split('.')[0] # Default to any available network interface
+    def __init__(self, port=10000):
+        self.host = "192.135.16.105" #socket.gethostname().split('.')[0] # Default to any available network interface
         self.port = port
         self.content_dir = '/home/pi/cloudChamber/server/web' # Directory where webpage files are stored
-        self.server_address = ('192.135.16.105', 10000)
+        self.server_address = ('192.135.16.105', port)
 
     def start(self):
         self.socket = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
