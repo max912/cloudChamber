@@ -67,6 +67,16 @@
 		    </div>
 		</div>
 		
+		<div>
+			Recording time: <input type="number" name="rec_time" id="recT" /> <br />
+			Number of samples: <input type="number" name="rec_num" id="recN" /> <br />
+			<input type="submit" value="Rec" id="vidRec" /> <br />
+			
+			
+			Preview time: <input type="number" name="prev_time" id="prevT" />
+			<input type="submit" value="Preview" id="vidPrev" /> <br />
+		</div>
+		
 		<footer>
 		    <div id="borsato">
 		        <p>Special thanks to Enrico Borsato</p>
@@ -147,7 +157,7 @@
             Plotly.newPlot("conductDiv", conductData, layoutC);
             Plotly.newPlot("glassDiv", glassData, layoutG);            
             
-            
+            /*
             setInterval(function() {
                 $.get("getTemperature", function(response, status) {
                     var temp = JSON.parse(response);
@@ -191,7 +201,7 @@
                     
                 });
             }, 500);
-            
+            */
             
             $("#mode_auto").click(function() {
                 $(".onoff").slideUp();
@@ -224,6 +234,31 @@
             $("#hv_switch").click(function(evt) {
                 if(evt.target.checked) $.get("hvOn", function(response, status) {console.debug(response)});
                 else $.get("hvOff", function(response, status) {console.debug(response)});
+            });
+            
+            $("#vidRec").click(function(evt) {
+            	var time = parseInt($("#recT").val());
+            	var n = parseInt($("#recN").val());
+            	$.get("videoRec?t="+time+"&n="+n, function(response, status) {console.debug(response)});
+            	$("#vidRec").attr("disabled", true);
+            	$("#vidPrev").attr("disabled", true);
+            	var time_dis = time*n+5;
+            	setTimeout(function() {
+	            	$("#vidRec").attr("disabled", false);
+            		$("#vidPrev").attr("disabled", false);
+            	}, time_dis*1000); 
+            });
+            
+            $("#vidPrev").click(function(evt) {
+            	var time = parseInt($("#prevT").val());
+            	$.get("videoPrev?t="+time, function(response, status) {console.debug(response)});
+            	$("#vidRec").attr("disabled", true);
+            	$("#vidPrev").attr("disabled", true);
+            	var time_dis = time+5;
+            	setTimeout(function() {
+	            	$("#vidRec").attr("disabled", false);
+            		$("#vidPrev").attr("disabled", false);
+            	}, time_dis*1000); 
             });
             
             $.get("getStatus", function(response, status){

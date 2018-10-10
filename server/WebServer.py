@@ -9,6 +9,7 @@ import threading
 import time
 import datetime
 import random
+import subprocess
 
 GPIO.setwarnings(False)
 
@@ -140,12 +141,23 @@ def setModeMan():
 def getStatus():
 	return ("{\"mode\":"+str(status["controlsMode"])+",\"pump\":"+str(status["pumpStatus"])+",\"glass\":"+str(status["glassStatus"])+",\"conduct\":"+str(status["conductStatus"])+",\"hv\":"+str(status["hvStatus"])+"}")
 
-callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan, "getStatus": getStatus, "hvOn": hvOn, "hvOff": hvOff}
+
+def videoRec(par):
+	t = par.split("&")[0].split("=")[1]
+	n = par.split("&")[1].split("=")[1]
+	return subprocess.call(["./videoRec.sh", t, n])
+
+def videoPrev(par):
+	t = par.split("=")[1]
+	return subprocess.call(["./videoPrev.sh", t])
+
+callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan, "getStatus": getStatus, "hvOn": hvOn, "hvOff": hvOff, "videoRec": videoRec, "videoPrev": videoPrev}
 
 
 
 
 def bootstrap():
+	time.sleep(3)
 	print("Starting the cloud chamber monitoring system...")
 	glassOff()
 	pumpOff()
@@ -157,7 +169,9 @@ def bootstrap():
 	setModeAuto()
 
 
-bootstrap()
+bootstrapThread = threading.Thread(target = bootstrap)
+bootstrapThread.setDaemon(True)
+bootstrapThread.start()
 
 
 class WebServer(object):
@@ -220,27 +234,36 @@ class WebServer(object):
         while True:
 #            print("CLIENT",client)
             data = client.recv(PACKET_SIZE).decode() # Recieve data packet from client and decode
-
+            
             if not data: break
-
+			
             request_method = data.split(' ')[0]
 #            print("Method: {m}".format(m=request_method))
 #            print("Request Body: {b}".format(b=data))
 
             if request_method == "GET" or request_method == "HEAD":
                 # Ex) "GET /index.html" split on space
-                file_requested = data.split(' ')[1]
+                file_requested_par = data.split(' ')[1]
 
                 # If get has parameters ('?'), ignore them
-                file_requested =  file_requested.split('?')[0]
+                file_requested =  file_requested_par.split('?')[0]
+                par = None
+
+                if len(file_requested_par.split('?')) == 2:
+	                par = file_requested_par.split('?')[1]
 
                 if file_requested == "/":
                     file_requested = "/index.html"
                 
                 request = file_requested.split('/')[1]
+
                 if request in callbacks:
                     response_header = self._generate_headers(200)
-                    response_data = str(callbacks[request]())
+
+                    if par:
+                    	response_data = str(callbacks[request](par))
+                    else:
+                    	response_data = str(callbacks[request]())
                 
                 else:
                     filepath_to_serve = self.content_dir + file_requested
