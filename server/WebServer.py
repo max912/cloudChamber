@@ -61,7 +61,7 @@ def stopThreads():
 
 def getTemperature():
 	return Temperature().getTemp()
-        ##### DEBUG
+        #### DEBUG
 	#date = datetime.datetime.now().strftime("%Y-%m-%d %H:%M:%S")
 	#return  ("{\"plate\": \""+str(random.randint(1,50))+"\",\"conduct\": \""+str(random.randint(1,50))+"\",\"glass\": \""+str(random.randint(1,50))+"\", \"date\":\""+str(date)+"\"}")
 
@@ -145,13 +145,19 @@ def getStatus():
 def videoRec(par):
 	t = par.split("&")[0].split("=")[1]
 	n = par.split("&")[1].split("=")[1]
-	return subprocess.call(["./videoRec.sh", t, n])
+	return subprocess.call(["/home/pi/cloudChamber/server/videoRec.sh", t, n])
 
 def videoPrev(par):
 	t = par.split("=")[1]
-	return subprocess.call(["./videoPrev.sh", t])
+	return subprocess.call(["/home/pi/cloudChamber/server/videoPrev.sh", t])
 
-callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan, "getStatus": getStatus, "hvOn": hvOn, "hvOff": hvOff, "videoRec": videoRec, "videoPrev": videoPrev}
+def streamCam():
+	return subprocess.call("/home/pi/RPi_Cam_Web_Interface/start.sh")
+	
+def streamCamStop():
+	return subprocess.call("/home/pi/RPi_Cam_Web_Interface/stop.sh")
+
+callbacks = {"getTemperature": getTemperature, "glassOn": glassOn, "glassOff": glassOff, "pumpOn": pumpOn, "pumpOff": pumpOff, "conductOn": conductOn, "conductOff": conductOff, "setModeAuto": setModeAuto, "setModeMan": setModeMan, "getStatus": getStatus, "hvOn": hvOn, "hvOff": hvOff, "videoRec": videoRec, "videoPrev": videoPrev, "streamCam": streamCam, "streamCamStop": streamCamStop}
 
 
 

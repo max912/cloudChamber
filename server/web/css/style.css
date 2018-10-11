@@ -158,9 +158,66 @@ input:checked + .slider:before {
   border-radius: 50%;
 }
 
-footer {
-	margin-top: 1em;
+#camera_div {
+	width: 30%;
+	margin: 1em auto;
+	display: block;
+	text-align: center;
 }
+
+#camera_btn {
+	width: 20%;
+	height: 50px;
+}
+
+#camera {
+	position: fixed;
+	display: none;
+	width: 100%;
+	height: 100%;
+	top: 0;
+	left: 0;
+	right: 0;
+	bottom: 0;
+	background-color: rgba(0,0,0,0.8);
+	z-index: 1002;
+}
+
+#camera_container {
+	width: 80%;
+	margin: 1em auto;
+	padding: 1em;
+	background-color: ivory;
+	min-height: 800px;
+	box-shadow: 0 0 50px 2px black;
+}
+
+#camera_str>iframe {
+	width: 100%;
+	overflow: hidden;
+	min-height: 300px;
+	border: 0;
+}
+
+#recDiv, #prevDiv {
+	width: 40%;
+	margin: 2em auto;
+	padding: 1em;
+	border: 1px solid #bbb;
+}
+
+#camera_str {
+	width: 60%;
+	margin: 2em auto;
+	padding: 1em;
+	border: 1px solid #bbb;
+	text-align: center;
+}
+
+
+/*footer {*/
+/*	margin-top: 1em;*/
+/*}*/
 
 footer div {
     display: inline-block;
